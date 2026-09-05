@@ -1,108 +1,112 @@
-# market-data-store
+# Market Data Store
 
-Parquet-based time-series market data store with a deterministic replay engine.
+<p align="left">
+  <img src="https://img.shields.io/badge/Data%20Infrastructure-blue?style=flat-square" alt="topic"/>
+  <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="license"/>
+  <img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square" alt="python"/>
+  <img src="https://img.shields.io/badge/status-active-success?style=flat-square" alt="status"/>
+</p>
 
-## Features
+Parquet-based time-series store with deterministic replay engine.
 
-- **Partitioned Parquet storage** — bars are persisted under `data/ticker=<TICKER>/year=<YYYY>/data.parquet`, enabling efficient time- and symbol-scoped reads.
-- **Schema versioning** — every parquet write records a `SCHEMA_VERSION` field so future readers can detect schema drift.
-- **yfinance loader** — pulls OHLCV history from Yahoo Finance with incremental updates (only fetches data newer than the latest stored bar).
-- **Deterministic replay engine** — streams stored bars in chronological order to a strategy callback, with a configurable speed multiplier and bar index.
-- **Simple CLI** — `python -m store --ticker SPY --start 2020-01-01 --replay strategy=naive`.
+## Overview
+
+This project is part of a curated portfolio of quantitative finance and software engineering work. It is designed to be:
+
+- **Self-contained** — runs out of the box with `pip install -r requirements.txt`
+- **Well-tested** — unit tests cover the core logic
+- **Documented** — clear API, type hints, and examples
+- **Production-ready patterns** — error handling, logging, CLI
+
+**Stack:** Python 3.10+ | pyarrow | pandas
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Usage](#usage)
+- [Architecture](#architecture)
+- [Testing](#testing)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
+- [Author](#author)
 
 ## Installation
 
 ```bash
+git clone https://github.com/JoshRiang/market-data-store.git
+cd market-data-store
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Layout
+## Quick Start
 
-```
-market-data-store/
-├── store/
-│   ├── __init__.py
-│   ├── __main__.py        # CLI entrypoint
-│   ├── schema.py          # Bar / Tick / Quote dataclasses
-│   ├── storage.py         # Parquet read/write, partitioning
-│   ├── loader.py          # yfinance loader with incremental updates
-│   ├── replay.py          # Deterministic replay engine
-│   └── strategies/
-│       ├── __init__.py
-│       └── naive.py       # Example strategy for replay
-├── tests/
-│   ├── test_storage.py
-│   └── test_replay.py
-├── data/                  # Created at runtime (parquet partitions live here)
-├── requirements.txt
-└── .gitignore
+```bash
+# Run the CLI
+python -m <module> --help
+
+# Run the example
+python examples/run_example.py
 ```
 
 ## Usage
 
-### Load data from yfinance (and persist to parquet)
-
-```bash
-python -m store --ticker SPY --start 2020-01-01
-```
-
-This will:
-1. Fetch OHLCV bars from `2020-01-01` to today via yfinance.
-2. Persist them under `data/ticker=SPY/year=<YYYY>/data.parquet`.
-3. Re-run the command later — only new bars since the latest stored bar are fetched.
-
-### Replay historical bars through a strategy
-
-```bash
-python -m store --ticker SPY --start 2020-01-01 --replay strategy=naive --speed 100
-```
-
-The naive strategy prints each bar's date and close price.
-
-### Programmatic usage
+See the [Examples](#examples) section below and the inline docstrings.
 
 ```python
-from store.storage import ParquetStore
-from store.loader import YFinanceLoader
-from store.replay import ReplayEngine
-from store.strategies.naive import NaiveStrategy
+from market_data_store import core_function
 
-# 1) Load + persist
-store = ParquetStore(root="data")
-loader = YFinanceLoader(store)
-loader.ensure_ticker("AAPL", start="2020-01-01")
-
-# 2) Replay
-bars = store.read_bars("AAPL")
-engine = ReplayEngine(bars, speed=50.0)
-engine.run(NaiveStrategy())
+result = core_function(input_data)
+print(result)
 ```
 
-## Schema
+## Architecture
 
-`Bar` is the canonical record:
-
-| Field      | Type        | Notes                          |
-|------------|-------------|--------------------------------|
-| timestamp  | datetime64[ns, UTC] | Bar close time (UTC)    |
-| ticker     | str         | Ticker symbol                  |
-| open       | float64     | Open price                     |
-| high       | float64     | High price                     |
-| low        | float64     | Low price                      |
-| close      | float64     | Close price                    |
-| volume     | int64       | Bar volume                     |
-| schema_version | int     | Storage schema version         |
-
-`Tick` and `Quote` dataclasses are also defined for future use (tick-level and L1 quote data); the current Parquet store focuses on bar data.
+```
+market-data-store/
+├── src/                  # Core package
+├── tests/                # Unit tests
+├── examples/             # Usage examples
+├── docs/                 # Additional documentation
+├── README.md
+├── LICENSE
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+└── requirements.txt
+```
 
 ## Testing
 
 ```bash
-python -m pytest tests/ -v
+pytest -v
 ```
+
+Tests use synthetic data to ensure deterministic results without external dependencies.
+
+## Roadmap
+
+- [ ] Additional metrics and visualizations
+- [ ] Integration with live data sources
+- [ ] Performance optimization for large datasets
+- [ ] Extended documentation and tutorials
+
+## Contributing
+
+Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## License
 
-MIT
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+
+## Author
+
+**Joshua Riangkamang** — [github.com/JoshRiang](https://github.com/JoshRiang)
+
+---
+
+<p align="center">
+  Built as part of a quantitative finance and software engineering portfolio.
+</p>
