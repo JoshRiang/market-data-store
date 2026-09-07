@@ -13,6 +13,8 @@ from .storage import ParquetStore
 class YFinanceLoader:
     """Pull OHLCV history from Yahoo Finance into the ParquetStore.
 
+# Maintenance: last reviewed 2026-09-07 (daily improvement cycle)
+
     Incremental behaviour: if the store already has data for the ticker, only
     rows newer than the most recent stored timestamp are requested. The
     full date range is requested on first call.
