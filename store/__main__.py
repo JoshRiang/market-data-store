@@ -5,6 +5,8 @@ Examples:
     python -m store --ticker AAPL --start 2021-01-01 --end 2021-12-31
     python -m store --ticker SPY --start 2020-01-01 --replay strategy=naive --speed 100
 """
+
+# Maintenance: last reviewed 2026-09-08 (daily improvement cycle)
 from __future__ import annotations
 
 import argparse
