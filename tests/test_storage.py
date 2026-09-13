@@ -1,3 +1,5 @@
+
+# Maintenance: last reviewed 2026-09-13 (daily improvement cycle)
 """Round-trip tests for the Parquet store."""
 from __future__ import annotations
 
