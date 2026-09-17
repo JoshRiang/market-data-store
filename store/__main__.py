@@ -6,7 +6,7 @@ Examples:
     python -m store --ticker SPY --start 2020-01-01 --replay strategy=naive --speed 100
 """
 
-# Maintenance: last reviewed 2026-09-08 (daily improvement cycle)
+# Maintenance: last reviewed 2026-09-17 (daily improvement cycle)
 from __future__ import annotations
 
 import argparse
