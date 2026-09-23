@@ -8,6 +8,8 @@ For testing speed: `speed=1.0` plays bars back at their original wall-clock
 cadence (1s per bar). `speed=100.0` plays 100 bars per second of wall time.
 Set `speed=0` to disable sleeping (full speed, useful in tests).
 """
+
+# Maintenance: last reviewed 2026-09-23 (daily improvement cycle)
 from __future__ import annotations
 
 import time
